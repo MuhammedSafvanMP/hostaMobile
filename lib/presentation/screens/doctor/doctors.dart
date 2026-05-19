@@ -4,20 +4,22 @@ import 'package:hosta/common/top_snackbar.dart';
 import 'package:hosta/data/models/doctor_model.dart';
 import 'package:hosta/presentation/screens/auth/signin.dart';
 import 'package:hosta/presentation/screens/doctor/doctor_detail.dart';
+import 'package:hosta/providers/booking_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/api_service.dart';
-
-class Doctors extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class Doctors extends ConsumerStatefulWidget {
   final String hospitalId;
   final String specialty;
 
   const Doctors({super.key, required this.hospitalId, required this.specialty});
 
   @override
-  State<Doctors> createState() => _DoctorsState();
+ // State<Doctors> createState() => _DoctorsState();
+  ConsumerState<Doctors> createState() => _DoctorsState();
 }
+class _DoctorsState extends ConsumerState<Doctors> {
 
-class _DoctorsState extends State<Doctors> {
   String searchQuery = '';
   List<Doctor> doctors = [];
   bool isLoading = true;
@@ -530,18 +532,44 @@ Widget _buildContent() {
   }
 
 
-   final bookingData = {
-    'userId': int.parse(storedUserId),  // Send as integer
-    'patient_dob': formatDate(patientDob),  // DD/MM/YYYY format
-    'patient_name': patientName,
-    'patient_place': patientPlace,
-    'patient_phone': patientPhone,
-    'hospitalId': int.parse(doctor.hospitalId.toString()),  // Send as integer
-    'doctorId': int.parse(doctor.id.toString()),  // Send as integer
-    'booking_date': formatDate(appointmentDate),  // DD/MM/YYYY format
-    'department': doctor.specialty,  // Add department field
-    'displayName': doctor.name,  // Use displayName instead of doctorName
-  };
+  //  final bookingData = {
+  //   'userId': int.parse(storedUserId),  // Send as integer
+  //   'patient_dob': formatDate(patientDob),  // DD/MM/YYYY format
+  //   'patient_name': patientName,
+  //   'patient_place': patientPlace,
+  //   'patient_phone': patientPhone,
+  //   'hospitalId': int.parse(doctor.hospitalId.toString()),  // Send as integer
+  //   'doctorId': int.parse(doctor.id.toString()),  // Send as integer
+  //   'booking_date': formatDate(appointmentDate),  // DD/MM/YYYY format
+  //   'department': doctor.specialty,  // Add department field
+  //   'displayName': doctor.name,  // Use displayName instead of doctorName
+  // };
+// final bookingData = {
+//   "userId": int.parse(storedUserId),
+//   "patient_dob": formatDate(patientDob), // DD/MM/YYYY ok
+//   "patient_name": patientName,
+//   "patient_place": patientPlace,
+//   "patient_phone": patientPhone,
+//   "hospitalId": int.parse(doctor.hospitalId.toString()),
+//   "doctorId": int.parse(doctor.id.toString()),
+
+//   "booking_date": appointmentDate.toIso8601String(), // FIX
+//   "doctor_name": doctor.name,                        // FIX
+//   "doctor_department": doctor.specialty,             // FIX
+// };
+final bookingData = {
+  "userId": int.parse(storedUserId),
+  "patient_dob": formatDate(patientDob),
+  "patient_name": patientName,
+  "patient_place": patientPlace,
+  "patient_phone": patientPhone,
+  "hospitalId": int.parse(doctor.hospitalId.toString()),
+  "doctorId": int.parse(doctor.id.toString()),
+  "booking_date": appointmentDate.toIso8601String(),
+  "doctor_name": doctor.name,
+  "doctor_department": doctor.specialty,
+ // "consulting_time": selectedTimeSlot, // ADD THIS
+};
  
 print("BOOKING DATA = $bookingData");
   showDialog(
@@ -563,6 +591,7 @@ print("BOOKING DATA = $bookingData");
 
       
     if (response.statusCode == 201 || response.data['success'] == true) {
+       ref.read(bookingStateProvider.notifier).refreshBookings();
       showTopSnackBar(
         context,
         '✅ Booking successful! Appointment confirmed with Dr. ${doctor.name}',
@@ -576,25 +605,6 @@ print("BOOKING DATA = $bookingData");
       );
     }
      
-    //  } on DioException catch (e) {
-    //   if (Navigator.canPop(context)) {
-    //   Navigator.pop(context);
-    // }
-    // String errorMessage = "Failed to book appointment. Please try again.";
-    // if (e.response != null) {
-    //   print("❌ Dio Error Response: ${e.response?.data}");
-    //    if (e.response?.data is Map) {
-    //     errorMessage = e.response?.data['message'] ?? 
-    //                   e.response?.data['error'] ?? 
-    //                   'Server error occurred';
-    //   } else if (e.response?.data is String) {
-    //     errorMessage = e.response?.data;
-    //   }
-    // } else if (e.type == DioExceptionType.connectionTimeout) {
-    //   errorMessage = "Connection timeout. Please check your internet.";
-    // } else if (e.type == DioExceptionType.connectionError) {
-    //   errorMessage = "No internet connection. Please try again.";
-    // }
     } on DioException catch (e) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
@@ -616,21 +626,6 @@ print("BOOKING DATA = $bookingData");
   }
 }
       
-//     showTopSnackBar(context, errorMessage, isError: true);
-//   } catch (e) {
-//       if (Navigator.canPop(context)) {
-//         Navigator.pop(context);
-//       }
-//        print("❌ Unexpected error: $e");
-//  showTopSnackBar(
-//       context,
-//       'An unexpected error occurred. Please try again.',
-//       isError: true,
-//     );
-//   }
-//   }
-
-
   void _showLoginDialog(BuildContext context) {
     showDialog(
       context: context,

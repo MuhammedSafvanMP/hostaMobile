@@ -391,11 +391,7 @@ Future<Response> editAmbulance(String id, Map<String, dynamic> updatedData) asyn
   }
 
 
-  //create booking
-  // Future<Response> createBooking(Map<String, dynamic> userId, Map<String, dynamic> data) async {
-  //   print('📡 Creating booking for user: $userId');
-  //   return await _dio.post('/api/booking', data: data);
-  // }
+
 // Future<Response> createBooking(String hospitalId,Map<String, dynamic> bookingData) async {
 //   return await _dio.post(
 //     '/booking/$hospitalId',
@@ -404,16 +400,22 @@ Future<Response> editAmbulance(String id, Map<String, dynamic> updatedData) asyn
 // }
 
   Future<Response> createBooking(Map<String, dynamic> bookingData) async {
-      print('📡 POST /api/booking');
-    print('📡 Data: $bookingData');
-     try {
-      final response = await _dio.post('/api/booking', data: bookingData);
-      return response;
-    } catch (e) {
-      print('❌ Booking error: $e');
-      rethrow;
-    }
-    }
+  try {
+    print("📡 POST /api/booking");
+    print("📡 DATA = $bookingData");
+
+    final response = await _dio.post('/api/booking', data: bookingData);
+
+    print("✅ STATUS = ${response.statusCode}");
+    print("✅ RESPONSE = ${response.data}");
+
+    return response;
+  } on DioException catch (e) {
+    print("❌ STATUS = ${e.response?.statusCode}");
+    print("❌ RESPONSE = ${e.response?.data}");
+    rethrow;
+  }
+}
 
 // GET bookings
   Future<Response> getAllBookings(String id) async {
