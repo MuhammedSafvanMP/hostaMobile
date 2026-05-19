@@ -4,6 +4,7 @@ import 'package:hosta/common/top_snackbar.dart';
 import 'package:hosta/data/models/doctor_model.dart';
 import 'package:hosta/presentation/screens/auth/signin.dart';
 import 'package:hosta/presentation/screens/doctor/doctor_detail.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/api_service.dart';
 
@@ -525,9 +526,12 @@ Widget _buildContent() {
       );
       return;
     }
- String formatDate(DateTime date) {
-    return "${date.day}/${date.month}/${date.year}";
-  }
+//  String formatDate(DateTime date) {
+//     return "${date.day}/${date.month}/${date.year}";
+//   }
+String formatDate(DateTime date) {
+  return DateFormat('yyyy-MM-dd').format(date);
+}
 
 
    final bookingData = {
