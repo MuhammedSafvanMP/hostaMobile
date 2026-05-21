@@ -125,48 +125,50 @@ class BookingNotifier extends StateNotifier<BookingState> {
     setupSocketListener();
   }
 
-//   Future<void> loadUserIdAndFetchBookings() async {
-//     try {
-//       final prefs = await SharedPreferences.getInstance();
-//      // final storedUserId = prefs.getString('userId');
-// final storedUserId = prefs.getInt('userId')?.toString();
 
-//       setUserId(storedUserId);
-//       print("📱 Loaded user ID for bookings: $storedUserId");
+// Future<void> loadUserIdAndFetchBookings() async {
+//   try {
+//     final prefs = await SharedPreferences.getInstance();
+    
+//     final storedUserId = prefs.getString('userId');
+    
+//     setUserId(storedUserId);
+//     print("📱 Loaded user ID for bookings: $storedUserId");
 
-//       if (storedUserId != null && storedUserId.isNotEmpty) {
-//         await fetchBookings();
-//       } else {
-//         setLoading(false);
-//         print("❌ No user ID found for bookings");
-//       }
-//     } catch (e) {
-//       print("❌ Error loading user ID: $e");
+//     if (storedUserId != null && storedUserId.isNotEmpty) {
+//       await fetchBookings();
+//     } else {
 //       setLoading(false);
+//       print("❌ No user ID found for bookings");
 //     }
+//   } catch (e) {
+//     print("❌ Error loading user ID: $e");
+//     setLoading(false);
 //   }
+// }
+
 Future<void> loadUserIdAndFetchBookings() async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    // FIX: Get userId as String directly
-    final storedUserId = prefs.getString('userId');
-    
+
+    String? storedUserId =
+        prefs.getString('userId') ??
+        prefs.getInt('userId')?.toString();
+
+    print("USER ID FOUND = $storedUserId");
+
     setUserId(storedUserId);
-    print("📱 Loaded user ID for bookings: $storedUserId");
 
     if (storedUserId != null && storedUserId.isNotEmpty) {
       await fetchBookings();
     } else {
       setLoading(false);
-      print("❌ No user ID found for bookings");
     }
   } catch (e) {
-    print("❌ Error loading user ID: $e");
+    print(e);
     setLoading(false);
   }
 }
-
-
 Future<void> fetchBookings() async {
   final userId = state.userId;
 
@@ -216,52 +218,47 @@ List<Map<String, dynamic>> parsedBookings = [];
   }
 }
 
-
 List<Map<String, dynamic>> _parseBookings(List<dynamic> bookingsData) {
   return bookingsData.map<Map<String, dynamic>>((b) {
     return {
-      "id": b["id"]?.toString() ?? 
-            b["bookingId"]?.toString() ?? 
-            b["_id"]?.toString() ?? 
-            "",
-      "hospital_id": b["hospitalId"]?.toString() ?? 
-                     b["hospital_id"]?.toString() ?? 
-                     "",
-      "hospital": b["hospitalName"]?.toString() ?? 
-                  b["hospital_name"]?.toString() ?? 
-                  b["hospital"]?.toString() ?? 
-                  "Hospital",
-      "type": b["doctorSpecialty"]?.toString() ?? 
-              b["specialty"]?.toString() ?? 
-              b["type"]?.toString() ?? 
-              "General",
-      "doctor": b["doctorName"]?.toString() ?? 
-                b["doctor_name"]?.toString() ?? 
-                b["doctor"]?.toString() ?? 
-                "Not specified",
-      "specialty": b["doctorSpecialty"]?.toString() ?? 
-                   b["specialty"]?.toString() ?? 
-                   "General",
-      "date": _parseDate(b["bookingDate"] ?? b["booking_date"] ?? b["date"]),
+      "id": b["id"]?.toString() ?? "",
+
+      "hospital_id": b["hospitalId"]?.toString() ?? "",
+
+      "hospital": b["hospitalName"]?.toString() ??
+          b["hospital_name"]?.toString() ??
+          "Hospital",
+
+      "doctor": b["doctor_name"]?.toString() ??
+          b["doctorName"]?.toString() ??
+          "Not specified",
+
+      "specialty": b["doctor_department"]?.toString() ??
+          b["doctorSpecialty"]?.toString() ??
+          b["specialty"]?.toString() ??
+          "General",
+
+      "date": _parseDate(
+        b["booking_date"] ??
+        b["bookingDate"] ??
+        b["date"],
+      ),
+
       "status": (b["status"] ?? "pending").toString().toLowerCase(),
-      "time": b["consultingTime"]?.toString() ?? 
-              b["time"]?.toString() ?? 
-              b["booking_time"]?.toString() ?? 
-              "N/A",
-      "patient_name": b["patientName"]?.toString() ?? 
-                      b["patient_name"]?.toString() ?? 
-                      "",
-      "patient_phone": b["patientPhone"]?.toString() ?? 
-                       b["patient_phone"]?.toString() ?? 
-                       "",
-      "patient_place": b["patientPlace"]?.toString() ?? 
-                       b["patient_place"]?.toString() ?? 
-                       "",
+
+      "time": b["consulting_time"]?.toString() ??
+          b["consultingTime"]?.toString() ??
+          "N/A",
+
+      "patient_name": b["patient_name"]?.toString() ?? "",
+
+      "patient_phone": b["patient_phone"]?.toString() ?? "",
+
+      "patient_place": b["patient_place"]?.toString() ?? "",
     };
   }).toList();
 }
 
-  
 
   String _parseDate(dynamic date) {
     try {

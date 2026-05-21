@@ -563,11 +563,3 @@ Future<Response> getAmbulance(String userId) async {
 
 
 }
-
-  
-
-
-
-
-
-

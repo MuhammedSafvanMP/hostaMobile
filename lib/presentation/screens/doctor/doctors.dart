@@ -4,21 +4,23 @@ import 'package:hosta/common/top_snackbar.dart';
 import 'package:hosta/data/models/doctor_model.dart';
 import 'package:hosta/presentation/screens/auth/signin.dart';
 import 'package:hosta/presentation/screens/doctor/doctor_detail.dart';
+import 'package:hosta/providers/booking_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/api_service.dart';
-
-class Doctors extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class Doctors extends ConsumerStatefulWidget {
   final String hospitalId;
   final String specialty;
 
   const Doctors({super.key, required this.hospitalId, required this.specialty});
 
   @override
-  State<Doctors> createState() => _DoctorsState();
+ // State<Doctors> createState() => _DoctorsState();
+  ConsumerState<Doctors> createState() => _DoctorsState();
 }
+class _DoctorsState extends ConsumerState<Doctors> {
 
-class _DoctorsState extends State<Doctors> {
   String searchQuery = '';
   List<Doctor> doctors = [];
   bool isLoading = true;
@@ -526,12 +528,9 @@ Widget _buildContent() {
       );
       return;
     }
-//  String formatDate(DateTime date) {
-//     return "${date.day}/${date.month}/${date.year}";
-//   }
-String formatDate(DateTime date) {
-  return DateFormat('yyyy-MM-dd').format(date);
-}
+ String formatDate(DateTime date) {
+    return "${date.day}/${date.month}/${date.year}";
+  }
 
 
    final bookingData = {
@@ -567,6 +566,7 @@ print("BOOKING DATA = $bookingData");
 
       
     if (response.statusCode == 201 || response.data['success'] == true) {
+       ref.read(bookingStateProvider.notifier).refreshBookings();
       showTopSnackBar(
         context,
         '✅ Booking successful! Appointment confirmed with Dr. ${doctor.name}',
@@ -580,25 +580,6 @@ print("BOOKING DATA = $bookingData");
       );
     }
      
-    //  } on DioException catch (e) {
-    //   if (Navigator.canPop(context)) {
-    //   Navigator.pop(context);
-    // }
-    // String errorMessage = "Failed to book appointment. Please try again.";
-    // if (e.response != null) {
-    //   print("❌ Dio Error Response: ${e.response?.data}");
-    //    if (e.response?.data is Map) {
-    //     errorMessage = e.response?.data['message'] ?? 
-    //                   e.response?.data['error'] ?? 
-    //                   'Server error occurred';
-    //   } else if (e.response?.data is String) {
-    //     errorMessage = e.response?.data;
-    //   }
-    // } else if (e.type == DioExceptionType.connectionTimeout) {
-    //   errorMessage = "Connection timeout. Please check your internet.";
-    // } else if (e.type == DioExceptionType.connectionError) {
-    //   errorMessage = "No internet connection. Please try again.";
-    // }
     } on DioException catch (e) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
@@ -620,21 +601,6 @@ print("BOOKING DATA = $bookingData");
   }
 }
       
-//     showTopSnackBar(context, errorMessage, isError: true);
-//   } catch (e) {
-//       if (Navigator.canPop(context)) {
-//         Navigator.pop(context);
-//       }
-//        print("❌ Unexpected error: $e");
-//  showTopSnackBar(
-//       context,
-//       'An unexpected error occurred. Please try again.',
-//       isError: true,
-//     );
-//   }
-//   }
-
-
   void _showLoginDialog(BuildContext context) {
     showDialog(
       context: context,
