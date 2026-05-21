@@ -5,6 +5,7 @@ import 'package:hosta/data/models/doctor_model.dart';
 import 'package:hosta/presentation/screens/auth/signin.dart';
 import 'package:hosta/presentation/screens/doctor/doctor_detail.dart';
 import 'package:hosta/providers/booking_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -532,44 +533,18 @@ Widget _buildContent() {
   }
 
 
-  //  final bookingData = {
-  //   'userId': int.parse(storedUserId),  // Send as integer
-  //   'patient_dob': formatDate(patientDob),  // DD/MM/YYYY format
-  //   'patient_name': patientName,
-  //   'patient_place': patientPlace,
-  //   'patient_phone': patientPhone,
-  //   'hospitalId': int.parse(doctor.hospitalId.toString()),  // Send as integer
-  //   'doctorId': int.parse(doctor.id.toString()),  // Send as integer
-  //   'booking_date': formatDate(appointmentDate),  // DD/MM/YYYY format
-  //   'department': doctor.specialty,  // Add department field
-  //   'displayName': doctor.name,  // Use displayName instead of doctorName
-  // };
-// final bookingData = {
-//   "userId": int.parse(storedUserId),
-//   "patient_dob": formatDate(patientDob), // DD/MM/YYYY ok
-//   "patient_name": patientName,
-//   "patient_place": patientPlace,
-//   "patient_phone": patientPhone,
-//   "hospitalId": int.parse(doctor.hospitalId.toString()),
-//   "doctorId": int.parse(doctor.id.toString()),
-
-//   "booking_date": appointmentDate.toIso8601String(), // FIX
-//   "doctor_name": doctor.name,                        // FIX
-//   "doctor_department": doctor.specialty,             // FIX
-// };
-final bookingData = {
-  "userId": int.parse(storedUserId),
-  "patient_dob": formatDate(patientDob),
-  "patient_name": patientName,
-  "patient_place": patientPlace,
-  "patient_phone": patientPhone,
-  "hospitalId": int.parse(doctor.hospitalId.toString()),
-  "doctorId": int.parse(doctor.id.toString()),
-  "booking_date": appointmentDate.toIso8601String(),
-  "doctor_name": doctor.name,
-  "doctor_department": doctor.specialty,
- // "consulting_time": selectedTimeSlot, // ADD THIS
-};
+   final bookingData = {
+    'userId': int.parse(storedUserId),  // Send as integer
+    'patient_dob': formatDate(patientDob),  // DD/MM/YYYY format
+    'patient_name': patientName,
+    'patient_place': patientPlace,
+    'patient_phone': patientPhone,
+    'hospitalId': int.parse(doctor.hospitalId.toString()),  // Send as integer
+    'doctorId': int.parse(doctor.id.toString()),  // Send as integer
+    'booking_date': formatDate(appointmentDate),  // DD/MM/YYYY format
+    'department': doctor.specialty,  // Add department field
+    'displayName': doctor.name,  // Use displayName instead of doctorName
+  };
  
 print("BOOKING DATA = $bookingData");
   showDialog(

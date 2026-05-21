@@ -180,11 +180,10 @@ Future<void> fetchBookings() async {
   setLoading(true);
 
   try {
-    final response = await _apiService.getAllBookings(userId);
- print("USER ID = $userId");
-print("FULL RESPONSE = ${response.data}");
-print("TYPE = ${response.data.runtimeType}");
-
+    final response = await _apiService.getAllBookings(
+        userId: userId,
+    );
+    print("FULL RESPONSE = ${response.data}");
 List<Map<String, dynamic>> parsedBookings = [];
  if (response.data is Map) {
       final data = response.data;
